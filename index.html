@@ -1,1 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extinction Escape</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      background: #0d1321;
+      color: #f5f5f5;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 4rem;
+      letter-spacing: 3px;
+      margin-top: 40px;
+      color: #8ef9f3;
+      text-shadow: 0 0 12px #00f5d4;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.4rem;
+      color: #ffd166;
+      margin-bottom: 40px;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #0d1321;
+      background: #ffd166;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.04);
+      background: #8ef9f3;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: #1d2d44;
+      border: 2px solid #3e5c76;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 0 15px rgba(0, 245, 212, 0.15);
+    }
+
+    .card h3 {
+      color: #8ef9f3;
+      margin-top: 0;
+    }
+
+    .species-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .stat-box {
+      background: #1d2d44;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #3e5c76;
+    }
+
+    .bar {
+      width: 100%;
+      height: 18px;
+      background: #111827;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ef476f, #ffd166, #06d6a0);
+      transition: width 0.4s;
+    }
+
+    .level-title {
+      font-size: 2.6rem;
+      color: #ffd166;
+      margin-bottom: 8px;
+    }
+
+    .level-subtitle {
+      font-size: 1.2rem;
+      color: #8ef9f3;
+      margin-bottom: 25px;
+    }
+
+    .enemy-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .enemy {
+      background: #ef476f;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .choice {
+      background: #3e5c76;
+      color: white;
+      text-align: left;
+      border: 1px solid #8ef9f3;
+    }
+
+    .choice:hover {
+      background: #06d6a0;
+      color: #0d1321;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 14px;
+      background: #111827;
+      border: 2px solid #ffd166;
+    }
+
+    .feedback h3 {
+      color: #ffd166;
+      margin-top: 0;
+    }
+
+    .next-button {
+      margin-top: 15px;
+    }
+
+    .glossary-term {
+      margin-bottom: 14px;
+    }
+
+    .glossary-term strong {
+      color: #8ef9f3;
+    }
+
+    .ending {
+      text-align: center;
+      padding-top: 40px;
+    }
+
+    .ending h2 {
+      font-size: 3rem;
+      color: #8ef9f3;
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 2.7rem;
+      }
+
+      .level-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Start Screen -->
+  <section id="startScreen" class="screen active">
+    <div class="container">
+      <h1 class="title">EXTINCTION ESCAPE</h1>
+      <p class="subtitle">One species. Six threats. One chance at recovery.</p>
+
+      <div class="menu-buttons">
+        <button onclick="showScreen('speciesScreen')">Start Game</button>
+        <button onclick="showScreen('glossaryScreen')">Threat Index</button>
+        <button onclick="showScreen('instructionsScreen')">How to Play</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instructions -->
+  <section id="instructionsScreen" class="screen">
+    <div class="container">
+      <h2 class="level-title">How to Play</h2>
+      <p>
+        Choose a species and guide it through six major threats to biodiversity:
+        habitat destruction, pollution, climate change, overexploitation,
+        invasive species, and disease.
+      </p>
+      <p>
+        Each level gives you a conservation decision. Correct choices help your
+        species survive. Poor choices reduce population size, habitat quality,
+        genetic diversity, or survival chance.
+      </p>
+      <p>
+        The goal is not just to avoid extinction. The goal is recovery: a stable,
+        self-sustaining wild population that remains part of its ecological community.
+      </p>
+
+      <div class="footer-buttons">
+        <button onclick="showScreen('startScreen')">Back to Menu</button>
+        <button onclick="showScreen('speciesScreen')">Choose Species</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Species Select -->
+  <section id="speciesScreen" class="screen">
+    <div class="container">
+      <h2 class="level-title">Choose Your Species</h2>
+      <p class="level-subtitle">Each species faces different risks.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="species-icon">🐍</div>
+          <h3>Dusky Sea Snake</h3>
+          <p><strong>Habitat:</strong> Tropical coral reefs</p>
+          <p><strong>Strength:</strong> Venomous reef predator</p>
+          <p><strong>Weakness:</strong> Depends on healthy coral reef habitat</p>
+          <button onclick="selectSpecies('Dusky Sea Snake', '🐍')">Select</button>
+        </div>
+
+        <div class="card">
+          <div class="species-icon">🐢</div>
+          <h3>Sea Turtle</h3>
+          <p><strong>Habitat:</strong> Ocean and beaches</p>
+          <p><strong>Strength:</strong> Long-distance migration</p>
+          <p><strong>Weakness:</strong> Vulnerable hatchlings</p>
+          <button onclick="selectSpecies('Sea Turtle', '🐢')">Select</button>
+        </div>
+
+        <div class="card">
+          <div class="species-icon">🦊</div>
+          <h3>Island Fox</h3>
+          <p><strong>Habitat:</strong> Island ecosystems</p>
+          <p><strong>Strength:</strong> Small and adaptable</p>
+          <p><strong>Weakness:</strong> Vulnerable to invasive predators</p>
+          <button onclick="selectSpecies('Island Fox', '🦊')">Select</button>
+        </div>
+
+        <div class="card">
+          <div class="species-icon">🐸</div>
+          <h3>Frog</h3>
+          <p><strong>Habitat:</strong> Wetlands and forests</p>
+          <p><strong>Strength:</strong> Sensitive indicator species</p>
+          <p><strong>Weakness:</strong> Permeable skin and disease risk</p>
+          <button onclick="selectSpecies('Frog', '🐸')">Select</button>
+        </div>
+      </div>
+
+      <div class="footer-buttons">
+        <button onclick="showScreen('startScreen')">Back to Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game Screen -->
+  <section id="gameScreen" class="screen">
+    <div class="container">
+      <h2 id="levelTitle" class="level-title"></h2>
+      <p id="levelSubtitle" class="level-subtitle"></p>
+
+      <div class="card">
+        <h3 id="speciesDisplay"></h3>
+
+        <div class="stats">
+          <div class="stat-box">
+            Population: <span id="populationValue">100</span>
+            <div class="bar"><div id="populationBar" class="bar-fill"></div></div>
+          </div>
+
+          <div class="stat-box">
+            Habitat Quality: <span id="habitatValue">100</span>
+            <div class="bar"><div id="habitatBar" class="bar-fill"></div></div>
+          </div>
+
+          <div class="stat-box">
+            Genetic Diversity: <span id="geneticValue">100</span>
+            <div class="bar"><div id="geneticBar" class="bar-fill"></div></div>
+          </div>
+
+          <div class="stat-box">
+            Survival Chance: <span id="survivalValue">100</span>%
+            <div class="bar"><div id="survivalBar" class="bar-fill"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Threat Briefing</h3>
+        <p id="levelDescription"></p>
+
+        <h3>Enemies</h3>
+        <div id="enemyList" class="enemy-list"></div>
+
+        <h3>Choose Your Move</h3>
+        <div id="choiceGrid" class="choice-grid"></div>
+
+        <div id="feedback" class="feedback">
+          <h3 id="feedbackTitle"></h3>
+          <p id="feedbackText"></p>
+          <button id="nextButton" class="next-button" onclick="nextLevel()">Continue</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ending Screen -->
+  <section id="endingScreen" class="screen">
+    <div class="container ending">
+      <h2 id="endingTitle"></h2>
+      <p id="endingMessage"></p>
+
+      <div class="card">
+        <h3>Final Stats</h3>
+        <p>Species: <span id="finalSpecies"></span></p>
+        <p>Population: <span id="finalPopulation"></span></p>
+        <p>Habitat Quality: <span id="finalHabitat"></span></p>
+        <p>Genetic Diversity: <span id="finalGenetic"></span></p>
+        <p>Survival Chance: <span id="finalSurvival"></span>%</p>
+      </div>
+
+      <div class="card">
+        <h3>Conservation Lesson</h3>
+        <p>
+          Biodiversity threats rarely act alone. Habitat loss can increase disease
+          spread, fragmentation can block climate-driven range shifts, invasive
+          species can disrupt food webs, and overexploitation can push small
+          populations below recovery.
+        </p>
+        <p>
+          Real conservation requires monitoring, habitat protection, pollution
+          reduction, sustainable harvest, invasive species prevention, disease
+          management, and long-term recovery planning.
+        </p>
+      </div>
+
+      <div class="footer-buttons">
+        <button onclick="restartGame()">Play Again</button>
+        <button onclick="showScreen('glossaryScreen')">Threat Index</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Glossary -->
+  <section id="glossaryScreen" class="screen">
+    <div class="container">
+      <h2 class="level-title">Threat Index</h2>
+
+      <div class="card">
+        <p class="glossary-term">
+          <strong>Habitat Destruction:</strong> Human alteration of habitat until it is no longer usable by other organisms.
+        </p>
+        <p class="glossary-term">
+          <strong>Habitat Degradation:</strong> A decrease in habitat quality that lowers individual fitness.
+        </p>
+        <p class="glossary-term">
+          <strong>Pollution:</strong> Habitat degradation caused by adding harmful substances or conditions.
+        </p>
+        <p class="glossary-term">
+          <strong>Climate Change:</strong> Long-term shifts in temperature, precipitation, oceans, and seasonal timing.
+        </p>
+        <p class="glossary-term">
+          <strong>Overexploitation:</strong> Direct human-caused mortality that threatens population viability.
+        </p>
+        <p class="glossary-term">
+          <strong>Invasive Species:</strong> An established non-native species that causes ecological, economic, or health damage.
+        </p>
+        <p class="glossary-term">
+          <strong>Disease:</strong> Reduced organism function caused by infectious agents such as bacteria, fungi, viruses, or protists.
+        </p>
+        <p class="glossary-term">
+          <strong>Phenology:</strong> Timing of seasonal behaviors, such as migration, flowering, hibernation, or breeding.
+        </p>
+        <p class="glossary-term">
+          <strong>Bioaccumulation:</strong> Toxins build up in the tissues of an organism.
+        </p>
+        <p class="glossary-term">
+          <strong>Biomagnification:</strong> Toxins become more concentrated higher in the food chain.
+        </p>
+      </div>
+
+      <div class="footer-buttons">
+        <button onclick="showScreen('startScreen')">Back to Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let selectedSpecies = "";
+    let selectedIcon = "";
+    let currentLevel = 0;
+
+    let stats = {
+      population: 100,
+      habitat: 100,
+      genetic: 100,
+      survival: 100
+    };
+
+    const levels = [
+      {
+        title: "LEVEL 1: HABITAT LOSS",
+        subtitle: "Avoid roads, farms, dams, fragmentation, and edge effects.",
+        description:
+          "Habitat destruction reduces the area a species can use, breaks habitat into isolated fragments, and increases edge effects. Fragmented populations may struggle to find food, mates, shelter, or safe movement corridors.",
+        enemies: ["Bulldozer", "Road", "Farm Field", "Dam", "Edge Predator"],
+        choices: [
+          "Build more roads through the habitat.",
+          "Protect large connected patches and create wildlife corridors.",
+          "Move all animals into tiny isolated patches.",
+          "Remove all native vegetation."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Wildlife corridors and protected connected habitat help individuals move between patches, maintain gene flow, and access resources.",
+        wrongText:
+          "Wrong move. More fragmentation lowers habitat quality, isolates populations, and increases edge effects.",
+        penalty: { population: 15, habitat: 25, genetic: 5, survival: 10 }
+      },
+      {
+        title: "LEVEL 2: POLLUTION SWAMP",
+        subtitle: "Dodge microplastics, acid rain, endocrine disruptors, and nutrient runoff.",
+        description:
+          "Pollution degrades habitat by adding harmful substances or conditions. It can reduce reproduction, disrupt behavior, poison food webs, and lower survival.",
+        enemies: ["Microplastics", "Acid Rain", "Fertilizer Runoff", "DDT", "Atrazine", "Light Pollution"],
+        choices: [
+          "Dump fertilizer and plastic into waterways.",
+          "Reduce runoff, remove plastic, and limit harmful chemicals.",
+          "Add more artificial beach lighting.",
+          "Ignore toxins because pollution only affects humans."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Pollution reduction improves habitat quality and lowers toxic effects on individuals and food webs.",
+        wrongText:
+          "Wrong move. Pollution can bioaccumulate, biomagnify, disrupt hormones, confuse animals, and cause dead zones.",
+        penalty: { population: 10, habitat: 20, genetic: 0, survival: 15 }
+      },
+      {
+        title: "LEVEL 3: CLIMATE CHAOS",
+        subtitle: "Survive range shifts, phenology mismatch, coral bleaching, and ocean acidification.",
+        description:
+          "Climate change alters temperature, precipitation, sea level, storms, fire risk, ocean chemistry, and seasonal timing. Species may need to shift ranges, adapt, or face extinction.",
+        enemies: ["Heat Wave", "Drought", "Wildfire", "Sea Level Rise", "Coral Bleaching", "Ocean Acidification"],
+        choices: [
+          "Protect only current habitat and ignore future projections.",
+          "Monitor ecosystems and protect habitat likely to remain suitable.",
+          "Assume all species can instantly adapt.",
+          "Move every species randomly."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Conservation should account for future suitable habitat, climate refuges, ecosystem monitoring, and shifting ranges.",
+        wrongText:
+          "Wrong move. Climate change can cause phenology mismatches, habitat loss, coral bleaching, ocean acidification, and range shifts.",
+        penalty: { population: 12, habitat: 20, genetic: 5, survival: 18 }
+      },
+      {
+        title: "LEVEL 4: OVERHARVEST MARKET",
+        subtitle: "Avoid bycatch, poaching, commercial exploitation, and unsustainable harvest.",
+        description:
+          "Overexploitation increases direct human-caused mortality to a level that threatens population viability. Commercial demand and efficient harvesting technology can make the problem worse.",
+        enemies: ["Gill Net", "Bottom Trawler", "Ivory Trader", "Bushmeat Stand", "Pet Trade Cage", "Shark Fin Market"],
+        choices: [
+          "Harvest as many individuals as possible.",
+          "Use catch limits, protected areas, and gear that reduces bycatch.",
+          "Target the biggest reproductive females.",
+          "Increase black market demand."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Sustainable harvest, catch limits, protected areas, and bycatch-reducing gear reduce mortality.",
+        wrongText:
+          "Wrong move. Heavy harvest can remove reproductive adults and push populations below recovery.",
+        penalty: { population: 25, habitat: 5, genetic: 10, survival: 15 }
+      },
+      {
+        title: "LEVEL 5: INVASION ZONE",
+        subtitle: "Compete with feral cats, zebra mussels, pythons, and invasive plants.",
+        description:
+          "Invasive species can reduce biodiversity through competition, predation, parasitism, hybridization, ecosystem alteration, and facilitation of other invaders.",
+        enemies: ["Feral Cat", "Python", "Zebra Mussel", "Purple Loosestrife", "Feral Pig", "Cane Toad"],
+        choices: [
+          "Release exotic pets into the wild.",
+          "Prevent introductions and remove invasive populations while they are small.",
+          "Wait until the invader spreads everywhere.",
+          "Introduce random predators without research."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Prevention, early detection, and rapid response are the best ways to manage invasive species.",
+        wrongText:
+          "Wrong move. Once invasive species establish, removal becomes expensive, difficult, and sometimes impossible.",
+        penalty: { population: 15, habitat: 20, genetic: 5, survival: 15 }
+      },
+      {
+        title: "FINAL BOSS: DISEASE OUTBREAK",
+        subtitle: "Low genetic diversity and fragmented habitat make this fight harder.",
+        description:
+          "Disease outbreaks are more dangerous when populations are dense, stressed, genetically similar, or unable to move away from infected individuals.",
+        enemies: ["Chytrid Fungus", "White-Nose Syndrome", "Canine Distemper", "Avian Malaria", "Toxoplasmosis"],
+        choices: [
+          "Keep populations small and isolated.",
+          "Improve habitat, maintain genetic diversity, monitor disease, and use captive breeding when needed.",
+          "Ignore disease until the species disappears.",
+          "Move sick individuals into every population."
+        ],
+        correct: 1,
+        correctText:
+          "Correct. Disease management requires monitoring, habitat quality, genetic diversity, and sometimes captive breeding or vaccination.",
+        wrongText:
+          "Wrong move. Disease spreads faster in crowded populations, and low genetic diversity reduces resilience.",
+        penalty: { population: 25, habitat: 5, genetic: 25, survival: 25 }
+      }
+    ];
+
+    function showScreen(screenId) {
+      const screens = document.querySelectorAll(".screen");
+      screens.forEach(screen => screen.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+    }
+
+    function selectSpecies(name, icon) {
+      selectedSpecies = name;
+      selectedIcon = icon;
+      currentLevel = 0;
+      stats = {
+        population: 100,
+        habitat: 100,
+        genetic: 100,
+        survival: 100
+      };
+      showScreen("gameScreen");
+      loadLevel();
+    }
+
+    function loadLevel() {
+      const level = levels[currentLevel];
+
+      document.getElementById("levelTitle").textContent = level.title;
+      document.getElementById("levelSubtitle").textContent = level.subtitle;
+      document.getElementById("levelDescription").textContent = level.description;
+      document.getElementById("speciesDisplay").textContent =
+        selectedIcon + " " + selectedSpecies;
+
+      const enemyList = document.getElementById("enemyList");
+      enemyList.innerHTML = "";
+      level.enemies.forEach(enemy => {
+        const span = document.createElement("span");
+        span.className = "enemy";
+        span.textContent = enemy;
+        enemyList.appendChild(span);
+      });
+
+      const choiceGrid = document.getElementById("choiceGrid");
+      choiceGrid.innerHTML = "";
+      level.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.textContent = choice;
+        button.onclick = () => makeChoice(index);
+        choiceGrid.appendChild(button);
+      });
+
+      document.getElementById("feedback").style.display = "none";
+      updateStatsDisplay();
+    }
+
+    function makeChoice(choiceIndex) {
+      const level = levels[currentLevel];
+      const feedback = document.getElementById("feedback");
+      const title = document.getElementById("feedbackTitle");
+      const text = document.getElementById("feedbackText");
+
+      if (choiceIndex === level.correct) {
+        title.textContent = "Conservation Power-Up!";
+        text.textContent = level.correctText;
+
+        stats.population = Math.min(100, stats.population + 5);
+        stats.habitat = Math.min(100, stats.habitat + 5);
+        stats.genetic = Math.min(100, stats.genetic + 3);
+        stats.survival = Math.min(100, stats.survival + 5);
+      } else {
+        title.textContent = "Threat Damage!";
+        text.textContent = level.wrongText;
+
+        stats.population -= level.penalty.population;
+        stats.habitat -= level.penalty.habitat;
+        stats.genetic -= level.penalty.genetic;
+        stats.survival -= level.penalty.survival;
+      }
+
+      clampStats();
+      updateStatsDisplay();
+      feedback.style.display = "block";
+
+      const choiceButtons = document.querySelectorAll(".choice");
+      choiceButtons.forEach(button => button.disabled = true);
+    }
+
+    function clampStats() {
+      stats.population = Math.max(0, Math.min(100, stats.population));
+      stats.habitat = Math.max(0, Math.min(100, stats.habitat));
+      stats.genetic = Math.max(0, Math.min(100, stats.genetic));
+      stats.survival = Math.max(0, Math.min(100, stats.survival));
+    }
+
+    function updateStatsDisplay() {
+      document.getElementById("populationValue").textContent = stats.population;
+      document.getElementById("habitatValue").textContent = stats.habitat;
+      document.getElementById("geneticValue").textContent = stats.genetic;
+      document.getElementById("survivalValue").textContent = stats.survival;
+
+      document.getElementById("populationBar").style.width = stats.population + "%";
+      document.getElementById("habitatBar").style.width = stats.habitat + "%";
+      document.getElementById("geneticBar").style.width = stats.genetic + "%";
+      document.getElementById("survivalBar").style.width = stats.survival + "%";
+    }
+
+    function nextLevel() {
+      currentLevel++;
+
+      if (
+        currentLevel >= levels.length ||
+        stats.population <= 0 ||
+        stats.habitat <= 0 ||
+        stats.survival <= 0
+      ) {
+        showEnding();
+      } else {
+        loadLevel();
+      }
+    }
+
+    function showEnding() {
+      showScreen("endingScreen");
+
+      document.getElementById("finalSpecies").textContent =
+        selectedIcon + " " + selectedSpecies;
+      document.getElementById("finalPopulation").textContent = stats.population;
+      document.getElementById("finalHabitat").textContent = stats.habitat;
+      document.getElementById("finalGenetic").textContent = stats.genetic;
+      document.getElementById("finalSurvival").textContent = stats.survival;
+
+      const average =
+        (stats.population + stats.habitat + stats.genetic + stats.survival) / 4;
+
+      if (average >= 75) {
+        document.getElementById("endingTitle").textContent = "VICTORY: RECOVERED POPULATION!";
+        document.getElementById("endingMessage").textContent =
+          "Your species survived the major threats and reached recovery status. It now has a stable population, usable habitat, genetic diversity, and a long-term conservation plan.";
+      } else if (average >= 40) {
+        document.getElementById("endingTitle").textContent = "PARTIAL RECOVERY";
+        document.getElementById("endingMessage").textContent =
+          "Your species survived, but it remains vulnerable. More habitat protection, monitoring, and threat reduction are needed.";
+      } else {
+        document.getElementById("endingTitle").textContent = "EXTINCTION RISK TOO HIGH";
+        document.getElementById("endingMessage").textContent =
+          "The threats were too severe. This shows why conservation must act early, before populations become too small or habitats become too degraded.";
+      }
+    }
+
+    function restartGame() {
+      selectedSpecies = "";
+      selectedIcon = "";
+      currentLevel = 0;
+      stats = {
+        population: 100,
+        habitat: 100,
+        genetic: 100,
+        survival: 100
+      };
+      showScreen("startScreen");
+    }
+        window.addEventListener('resize', resizeStars);
+    resizeStars();
+    drawStars();
+    function testKeyCode(e) {
+    var keycode;
+    if (window.event) keycode = window.event.keyCode;
+    else if (e) keycode = e.which;
+    var e = e || window.event;
+               if (e.ctrlKey &&
+                      (e.keyCode === 67 ||
+                       e.keyCode === 86 ||
+                       e.keyCode === 85 ||
+                       e.keyCode === 117)) {
+        alert('This function does not work. Property of dev.');
+       return false;
+       } else {
+        return true;
+       }
+}
+document.onkeydown = testKeyCode;
+  </script>
+</body>
+</html>
