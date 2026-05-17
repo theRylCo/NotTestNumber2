@@ -745,26 +745,18 @@
       };
       showScreen("startScreen");
     }
-    window.addEventListener('resize', resizeStars);
-    resizeStars();
-    drawStars();
-    function testKeyCode(e) {
-    var keycode;
-    if (window.event) keycode = window.event.keyCode;
-    else if (e) keycode = e.which;
-    var e = e || window.event;
-               if (e.ctrlKey &&
-                      (e.keyCode === 67 ||
-                       e.keyCode === 86 ||
-                       e.keyCode === 85 ||
-                       e.keyCode === 117)) {
-        alert('This function does not work. Property of dev.');
-       return false;
-       } else {
-        return true;
-       }
-}
-document.onkeydown = testKeyCode;
+    document.addEventListener("keydown", function (e) {
+      const blockedKeys = ["c", "v", "u"];
+
+      if (
+        e.ctrlKey &&
+        blockedKeys.includes(e.key.toLowerCase())
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert("This function does not work. Property of dev.");
+      }
+    });
   </script>
 </body>
 </html>
